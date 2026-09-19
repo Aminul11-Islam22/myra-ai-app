@@ -566,7 +566,6 @@ async function sendQueryToBackend(promptText) {
         const match = aiReply.match(/\[PLAY_VIDEO:\s*(.*?)\]/);
         if (match && match[1]) {
           const searchQuery = encodeURIComponent(match[1].trim());
-          // ইউটিউব অ্যাপ ওপেন করে গানটি আগে সার্চ করবে
           window.location.href = `intent://www.youtube.com/results?search_query=${searchQuery}#Intent;package=com.google.android.youtube;scheme=https;end;`;
         }
         aiReply = aiReply.replace(/\[PLAY_VIDEO:.*?\]/g, '').trim();
@@ -577,7 +576,6 @@ async function sendQueryToBackend(promptText) {
         const match = aiReply.match(/\[OPEN_YOUTUBE:\s*(.*?)\]/);
         if (match && match[1]) {
           const searchQuery = encodeURIComponent(match[1].trim());
-          // ইউটিউব অ্যাপ ওপেন করে গানটি আগে সার্চ করবে
           window.location.href = `intent://www.youtube.com/results?search_query=${searchQuery}#Intent;package=com.google.android.youtube;scheme=https;end;`;
         }
         aiReply = aiReply.replace(/\[OPEN_YOUTUBE:.*?\]/g, '').trim();
@@ -597,31 +595,40 @@ async function sendQueryToBackend(promptText) {
   }
 }
 
-// --- AI SPEECH SYNTHESIS WITH FEMALE VOICE ENGINE ---
-function speakAiResponse(replyText) {
+// --- ELEVENLABS AI SPEECH SYNTHESIS ENGINE (FEMALE VOICE) ---
+async function speakAiResponse(replyText) {
   isAiSpeaking = true;
   stopVoiceRecognition();
-  
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    
-    const utterance = new SpeechSynthesisUtterance(replyText);
-    utterance.lang = 'bn-BD';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.2; // পিস বাড়িয়ে কন্ঠটিকে মেয়েলি রূপ দেওয়া হলো
 
-    // ডিভাইসের স্টোর থেকে ফিমেল / মেয়েদের কণ্ঠ সিলেক্ট করার চেষ্টা
-    const voices = window.speechSynthesis.getVoices();
-    const femaleVoice = voices.find(voice => 
-      (voice.lang.includes('bn') || voice.lang.includes('en')) && 
-      (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('google') || voice.name.toLowerCase().includes('zira'))
-    );
+  // আপনার কপি করা ElevenLabs API Key ও Voice ID
+  const ELEVENLABS_API_KEY = "sk_f46f26501faaabcd8ef690020bdae76f7598f5c53770cba9";
+  const VOICE_ID = "fydPJq00SigRlaPxWgiS"; 
 
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
-    }
+  try {
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+      method: "POST",
+      headers: {
+        "Accept": "audio/mpeg",
+        "Content-Type": "application/json",
+        "xi-api-key": ELEVENLABS_API_KEY
+      },
+      body: JSON.stringify({
+        text: replyText,
+        model_id: "eleven_multilingual_v2", // বাংলা ভাষার জন্য সেরা মডেল
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75
+        }
+      })
+    });
+
+    if (!response.ok) throw new Error("ElevenLabs Voice API Failed");
+
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
     
-    utterance.onend = () => {
+    audio.onended = () => {
       isAiSpeaking = false;
       setTimeout(() => { 
         const overlay = document.getElementById('center-orb-overlay');
@@ -631,23 +638,46 @@ function speakAiResponse(replyText) {
       }, 500);
     };
 
-    utterance.onerror = () => {
+    audio.onerror = () => {
       isAiSpeaking = false;
     };
-    
-    window.speechSynthesis.speak(utterance);
-  } else {
-    setTimeout(() => { 
-      isAiSpeaking = false; 
-    }, 3000);
-  }
-}
 
-// ভয়েস লোড হওয়া নিশ্চিত করা
-if ('speechSynthesis' in window) {
-  window.speechSynthesis.onvoiceschanged = () => {
-    window.speechSynthesis.getVoices();
-  };
+    // মেয়েদের ভয়েস স্পিকার দিয়ে প্লে করবে
+    await audio.play();
+
+  } catch (error) {
+    console.error("ElevenLabs Error, switching to browser backup voice:", error);
+
+    // কোনো কারণে API ফেইল করলে ব্রাউজারের ফিমেল ভয়েস প্লে হবে
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(replyText);
+      utterance.lang = 'bn-BD';
+      utterance.rate = 1.0;
+      utterance.pitch = 1.2;
+
+      const voices = window.speechSynthesis.getVoices();
+      const femaleVoice = voices.find(voice => 
+        (voice.lang.includes('bn') || voice.lang.includes('en')) && 
+        (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('google') || voice.name.toLowerCase().includes('zira'))
+      );
+
+      if (femaleVoice) utterance.voice = femaleVoice;
+
+      utterance.onend = () => {
+        isAiSpeaking = false;
+      };
+
+      utterance.onerror = () => {
+        isAiSpeaking = false;
+      };
+
+      window.speechSynthesis.speak(utterance);
+    } else {
+      isAiSpeaking = false;
+    }
+  }
 }
 
 let clock = new THREE.Clock();
