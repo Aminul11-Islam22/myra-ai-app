@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MYRA AI - Voice Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- External CSS Link -->
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="container">
+    
+    <!-- 1. HOME PAGE -->
+    <div id="page-home" class="page active">
+      <div class="header">
+        <h1>Hello, MD Aminur islam</h1>
+        <p>How can I assist you today?</p>
+      </div>
+
+      <div id="canvas-container"></div>
+
+      <div class="input-box-container">
+        <input type="text" class="input-box" placeholder="Ask MYRA anything...">
+        <button class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" onclick="toggleCenterOrb()">
+          <i class="fa-solid fa-wave-square card-icon"></i>
+          <div>
+            <div class="card-title">Voice Mode</div>
+            <div class="card-subtitle">Holographic Orb</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <i class="fa-solid fa-camera card-icon"></i>
+          <div>
+            <div class="card-title">Neural Lens</div>
+            <div class="card-subtitle">Object Scan</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <i class="fa-solid fa-map-location-dot card-icon"></i>
+          <div>
+            <div class="card-title">AMOLED Map</div>
+            <div class="card-subtitle">Vector Guide</div>
+          </div>
+        </div>
+
+        <div class="card" onclick="switchTab('orb-custom')">
+          <i class="fa-solid fa-sliders card-icon"></i>
+          <div>
+            <div class="card-title">Aura Control</div>
+            <div class="card-subtitle">Settings</div>
+          </div>
+        </div>
+
+        <div class="card card-full">
+          <i class="fa-solid fa-rocket card-icon"></i>
+          <div>
+            <div class="card-title">Mission Mode</div>
+            <div class="card-subtitle">Give MYRA a goal to run autonomously</div>
+          </div>
+        </div>
+
+        <div class="card card-full">
+          <i class="fa-solid fa-book-open card-icon"></i>
+          <div>
+            <div class="card-title">🎓 English Teacher AI</div>
+            <div class="card-subtitle">Learn English • Speak • Improve • Interview</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. SETTINGS PAGE -->
+    <div id="page-settings" class="page">
+      <div class="settings-hero">
+        <div class="settings-title-area">
+          <h1>MYRA</h1>
+          <div class="sub-title">Your Intelligent AI Assistant</div>
+          <h2>Settings</h2>
+          <div class="desc">Customize your MYRA experience</div>
+        </div>
+        <div id="character-3d-container" class="character-container"></div>
+      </div>
+
+      <div class="settings-list">
+        <div class="setting-item" onclick="switchTab('voice-models')">
+          <div class="setting-left">
+            <div class="setting-icon"><i class="fa-solid fa-gear"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">Voice & AI Models</div>
+              <div class="setting-desc">Manage assistant voice and AI models</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+
+        <div class="setting-item" onclick="switchTab('orb-custom')">
+          <div class="setting-left">
+            <div class="setting-icon"><i class="fa-solid fa-palette"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">Orb Customization</div>
+              <div class="setting-desc">Change assistant orb color and size</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+
+        <div class="setting-item" onclick="switchTab('api-settings')">
+          <div class="setting-left">
+            <div class="setting-icon"><i class="fa-solid fa-cloud"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">API & Cloud Settings</div>
+              <div class="setting-desc">Configure all API keys and services</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+
+        <div class="setting-item" onclick="switchTab('connectors')">
+          <div class="setting-left">
+            <div class="setting-icon"><i class="fa-solid fa-plug"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">Connectors</div>
+              <div class="setting-desc">Connect MYRA with apps and AI services</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+
+        <div class="setting-item" onclick="switchTab('permissions')">
+          <div class="setting-left">
+            <div class="setting-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">Permissions</div>
+              <div class="setting-desc">Manage all required permissions</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-left">
+            <div class="setting-icon"><i class="fa-solid fa-lock"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">Voice Authentication</div>
+              <div class="setting-desc">Secure your assistant with your voice</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-left">
+            <div class="setting-icon"><i class="fa-solid fa-key"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">MYRA Security</div>
+              <div class="setting-desc">App lock, PIN, biometric, and GF Mode</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERMISSIONS EXPLAINED PAGE -->
+    <div id="page-permissions" class="page">
+      <div class="perm-header-title">Permissions Explained</div>
+
+      <!-- 1. Accessibility Services -->
+      <div class="perm-hero-card">
+        <div class="perm-badge-row">
+          <div class="perm-badge-title">
+            <i class="fa-solid fa-child-reaching"></i>
+            <span>Accessibility Services</span>
+          </div>
+          <span class="perm-status-btn">Accessibility permission required</span>
+        </div>
+
+        <div class="perm-desc-text">
+          <p>🤖 Enable MYRA AI to control your phone through voice commands. This permission allows reading screen content and performing actions for hands-free device automation and improved accessibility.</p>
+          
+          <p>🤖 <strong>Why MYRA Needs Accessibility Services:</strong><br>
+          MYRA is an AI assistant that helps you control your phone through voice commands. To do this, it requires accessibility permissions to understand and interact with your device.</p>
+
+          <p>📱 <strong>What This Permission Allows:</strong></p>
+          <div class="perm-bullet-list">
+            <div class="perm-bullet-item">• <strong>Read Screen Content:</strong> MYRA can see and analyze what's currently displayed on your screen to understand the context and provide relevant assistance.</div>
+            <div class="perm-bullet-item">• <strong>Perform Actions:</strong> Execute touch gestures, taps, swipes, and navigation (Back, Home, Recent Apps) on your behalf based on your voice commands.</div>
+            <div class="perm-bullet-item">• <strong>App Interaction:</strong> Open apps, fill forms, scroll through content, and navigate between different screens as requested.</div>
+          </div>
+
+          <p>🔒 <strong>Privacy & Data Protection:</strong></p>
+          <div class="perm-bullet-list">
+            <div class="perm-bullet-item">• All processing happens on Gemini API</div>
+            <div class="perm-bullet-item">• No personal data is collected or stored, but it is sent to Google Gemini</div>
+            <div class="perm-bullet-item">• Screen content is only accessed when you actively use MYRA, otherwise MYRA doesn't access screen content</div>
+            <div class="perm-bullet-item">• We implement safeguards to protect sensitive information, but MYRA can still make mistakes</div>
+          </div>
+
+          <p>♿ <strong>Accessibility Benefits:</strong><br>
+          This service enables hands-free device control, making smartphones more accessible for users with disabilities, visual impairments, or mobility limitations.</p>
+
+          <p>By proceeding, you understand and consent to MYRA using accessibility services for AI-powered device automation.</p>
+        </div>
+
+        <button class="perm-grant-btn">Grant Accessibility Permission</button>
+      </div>
+
+      <!-- 2. Default Assistant -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-microphone"></i>
+            <span>Default Assistant</span>
+          </div>
+          <span class="perm-status-btn">Not Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          This lets you activate MYRA by holding the home button or using a voice command, even when the app is closed.
+        </div>
+        <button class="perm-action-btn">Set as Default Assistant</button>
+      </div>
+
+      <!-- 3. Microphone -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-users-viewfinder"></i>
+            <span>Microphone</span>
+          </div>
+          <span class="perm-status-btn">Not Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          The microphone is required for the voice command and wake-word features. It allows you to give instructions to MYRA by speaking.
+        </div>
+        <button class="perm-action-btn">Grant Microphone Permission</button>
+      </div>
+
+      <!-- 4. Display Over Other Apps -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-window-restore"></i>
+            <span>Display Over Other Apps</span>
+          </div>
+          <span class="perm-status-btn">Not Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          This permission is used to show visual feedback, such as the questions that MYRA have, captions and the voice wave animations, on top of other apps while MYRA is working.
+        </div>
+        <button class="perm-action-btn">Grant Overlay Permission</button>
+      </div>
+
+      <!-- 5. Calls -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-child-reaching"></i>
+            <span>Calls</span>
+          </div>
+          <span class="perm-status-btn">Not Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          Allow MYRA to place calls and manage phone actions when you ask it to call someone or dial a number.
+        </div>
+        <button class="perm-action-btn">Grant Call Permission</button>
+      </div>
+
+      <!-- 6. Notifications -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-child-reaching"></i>
+            <span>Notifications</span>
+          </div>
+          <span class="perm-status-btn granted">Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          Let MYRA show you alerts, reminders, and important updates related to your requests.
+        </div>
+      </div>
+
+      <!-- 7. Messages -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-users-viewfinder"></i>
+            <span>Messages</span>
+          </div>
+          <span class="perm-status-btn">Not Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          Allow MYRA to read or send messages so it can help you with SMS and messaging requests.
+        </div>
+        <button class="perm-action-btn">Grant Messages Permission</button>
+      </div>
+
+      <!-- 8. Location -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-window-restore"></i>
+            <span>Location</span>
+          </div>
+          <span class="perm-status-btn">Not Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          Allow MYRA to use your location for context-aware requests such as directions or nearby services.
+        </div>
+        <button class="perm-action-btn">Grant Location Permission</button>
+      </div>
+
+      <!-- 9. Contacts -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-child-reaching"></i>
+            <span>Contacts</span>
+          </div>
+          <span class="perm-status-btn">Not Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          Allow MYRA to look up names and numbers so it can call, message, or announce contacts by name.
+        </div>
+        <button class="perm-action-btn">Grant Contacts Permission</button>
+      </div>
+
+      <!-- 10. Screen Lock -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-window-restore"></i>
+            <span>Screen Lock</span>
+          </div>
+          <span class="perm-status-btn granted">Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          Allow MYRA to lock your screen when you ask it to.
+        </div>
+      </div>
+
+      <!-- 11. App Management -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-child-reaching"></i>
+            <span>App Management</span>
+          </div>
+        </div>
+        <div class="perm-desc-text">
+          Allows MYRA to see the apps you have installed. With this, MYRA can open applications for you directly and instantly (e.g., Open YouTube), instead of relying on slower methods of searching the screen. This makes the process much faster and more reliable.
+        </div>
+      </div>
+
+      <!-- 12. Camera Vision -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-camera"></i>
+            <span>Camera Vision</span>
+          </div>
+          <span class="perm-status-btn">Not Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          Required for MYRA to look at objects, scan QR/barcodes, and read documents.
+        </div>
+        <button class="perm-action-btn">Grant Camera Permission</button>
+      </div>
+
+      <!-- 13. Storage & File Access -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Storage & File Access</span>
+          </div>
+          <span class="perm-status-btn">Not Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          Required for MYRA to manage files, clean storage, analyze disk space, search photos, and save photos.
+        </div>
+        <button class="perm-action-btn">Grant Storage Permission</button>
+      </div>
+
+      <!-- 14. Battery Optimization -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Battery Optimization</span>
+          </div>
+          <span class="perm-status-btn granted">Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          <p>If MYRA is not working properly, this might be due to intense battery optimization by your device manufacturer.</p>
+          <p style="margin-top:8px;">Manufacturers like Samsung, Huawei, OnePlus, Xiaomi, and others often add aggressive battery optimizations that can break MYRA's functionality.</p>
+          <p style="margin-top:8px;">To fix this, you need to disable battery optimizations specifically for MYRA in your device settings.</p>
+        </div>
+      </div>
+
+      <!-- 15. Usage Access -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-clock"></i>
+            <span>Usage Access</span>
+          </div>
+          <span class="perm-status-btn granted">Granted</span>
+        </div>
+        <div class="perm-desc-text">
+          Lets MYRA see which apps have been most active, so she can tell you what is draining your battery or slowing the phone down.
+        </div>
+      </div>
+
+      <!-- 16. Gaming Assistant Screen Check -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-child-reaching"></i>
+            <span>Gaming Assistant Screen Check</span>
+          </div>
+          <div class="toggle-switch"></div>
+        </div>
+        <div class="perm-desc-text">
+          Allow MYRA to analyze the game screen state to provide real-time strategic advice for Free Fire, BGMI, etc.
+        </div>
+      </div>
+
+      <!-- 17. ChatGPT Image Generation -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-child-reaching"></i>
+            <span>ChatGPT Image Generation</span>
+          </div>
+          <div class="toggle-switch"></div>
+        </div>
+        <div class="perm-desc-text">
+          Allow MYRA to automate the installed ChatGPT app to create and download images and set wallpapers.
+        </div>
+      </div>
+
+      <!-- 18. Automated Payments Confirmation -->
+      <div class="perm-card">
+        <div class="perm-card-header">
+          <div class="perm-card-title">
+            <i class="fa-solid fa-child-reaching"></i>
+            <span>Automated Payments Confirmation</span>
+          </div>
+          <div class="toggle-switch"></div>
+        </div>
+        <div class="perm-desc-text">
+          Allow MYRA to perform hands-free banking/UPI payment screen automation with secure user confirmation.
+        </div>
+      </div>
+
+      <button class="perm-back-btn" onclick="switchTab('settings')">BACK</button>
+    </div>
+
+    <!-- 3. VOICE MODELS PAGE (SUB-PAGE) -->
+    <div id="page-voice-models" class="page">
+      <div class="subpage-header">
+        <i class="fa-solid fa-arrow-left back-btn" onclick="switchTab('settings')"></i>
+        <div>
+          <h2>Voice Models <i class="fa-solid fa-chart-simple" style="color: #ff2a4b; font-size:16px;"></i></h2>
+          <p>Choose the perfect voice for MYRA</p>
+        </div>
+      </div>
+
+      <div class="filter-pills">
+        <button class="pill-btn active">All</button>
+        <button class="pill-btn">Female</button>
+        <button class="pill-btn">Male</button>
+      </div>
+
+      <div class="search-input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="search-input" placeholder="Search voice model...">
+      </div>
+
+      <div class="section-title-sm">Select Personality Mode</div>
+      <div class="filter-pills">
+        <button class="pill-btn active">Normal</button>
+        <button class="pill-btn">GF Mode</button>
+        <button class="pill-btn">Friend Mode</button>
+      </div>
+
+      <div class="voice-list" style="margin-top: 15px;">
+        <div class="voice-card">
+          <div class="voice-card-left">
+            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
+            <div class="avatar-img" style="background: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60') center/cover;"></div>
+            <div class="voice-details">
+              <h4>Achernar</h4>
+              <p>Smooth, professional</p>
+              <div class="voice-tags">
+                <span class="tag-badge female">Female</span>
+                <span class="tag-badge">English</span>
+              </div>
+            </div>
+          </div>
+          <i class="fa-regular fa-heart like-icon"></i>
+        </div>
+
+        <div class="voice-card">
+          <div class="voice-card-left">
+            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
+            <div class="avatar-img" style="background: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=60') center/cover;"></div>
+            <div class="voice-details">
+              <h4>Achird</h4>
+              <p>Warm, expressive male</p>
+              <div class="voice-tags">
+                <span class="tag-badge male">Male</span>
+                <span class="tag-badge">English</span>
+              </div>
+            </div>
+          </div>
+          <i class="fa-regular fa-heart like-icon"></i>
+        </div>
+
+        <div class="voice-card">
+          <div class="voice-card-left">
+            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
+            <div class="avatar-img" style="background: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=60') center/cover;"></div>
+            <div class="voice-details">
+              <h4>Algenib</h4>
+              <p>Bright, youthful male</p>
+              <div class="voice-tags">
+                <span class="tag-badge male">Male</span>
+                <span class="tag-badge">English</span>
+              </div>
+            </div>
+          </div>
+          <i class="fa-regular fa-heart like-icon"></i>
+        </div>
+
+        <div class="voice-card">
+          <div class="voice-card-left">
+            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
+            <div class="avatar-img" style="background: url('https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=60') center/cover;"></div>
+            <div class="voice-details">
+              <h4>Algieba</h4>
+              <p>Deep, resonant male</p>
+              <div class="voice-tags">
+                <span class="tag-badge male">Male</span>
+                <span class="tag-badge">English</span>
+              </div>
+            </div>
+          </div>
+          <i class="fa-regular fa-heart like-icon"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. ORB CUSTOMIZATION PAGE (SUB-PAGE) -->
+    <div id="page-orb-custom" class="page">
+      <div class="subpage-header">
+        <i class="fa-solid fa-arrow-left back-btn" onclick="switchTab('settings')"></i>
+        <h2>Orb Customization</h2>
+      </div>
+
+      <div class="orb-preview-card">
+        <div class="preview-label">Preview</div>
+        <div id="orb-3d-canvas-container"></div>
+      </div>
+
+      <div class="setting-group">
+        <div class="group-label">Orb Type</div>
+        <div class="filter-pills" id="orb-type-pills">
+          <button class="pill-btn active" onclick="switchOrbType('classic', this)">Classic</button>
+          <button class="pill-btn" onclick="switchOrbType('energy', this)">Energy</button>
+          <button class="pill-btn" onclick="switchOrbType('neon', this)">Neon</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="group-label">Adjust Orb Size</div>
+        <div class="slider-wrap">
+          <input type="range" class="range-slider" min="1" max="100" value="50" id="orb-size-slider">
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="group-label">Adjust Color Hue</div>
+        <div class="slider-wrap">
+          <input type="range" class="range-slider hue-slider" min="0" max="360" value="200" id="orb-hue-slider">
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="group-label" style="color: #a09fae; font-size: 13px;">System Presence</div>
+        <div class="toggle-row-item">
+          <div>
+            <div class="toggle-title">Aura Border Mode</div>
+            <div class="toggle-sub">Shows a rotating border instead of the central orb</div>
+          </div>
+          <div class="toggle-switch off"></div>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="group-label" style="color: #a09fae; font-size: 13px;">Voice Visualizer</div>
+        <div class="toggle-row-item">
+          <div class="toggle-title">Show Spectrum on Home</div>
+          <div class="toggle-switch"></div>
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="saveOrbSettings()">Save Changes</button>
+    </div>
+
+    <!-- 5. API & CLOUD SETTINGS PAGE -->
+    <div id="page-api-settings" class="page">
+      <div class="subpage-header" style="margin-bottom: 10px;">
+        <i class="fa-solid fa-arrow-left back-btn" onclick="switchTab('settings')"></i>
+      </div>
+      
+      <div class="api-header">
+        <h2>API & Cloud Settings</h2>
+        <p>Configure your API keys and cloud services</p>
+      </div>
+
+      <div class="api-section-title">OpenRouter API Keys (Recommended)</div>
+      <div class="api-section-subtitle">Multiple keys can be comma-separated. Get from: https://openrouter.ai</div>
+      <input type="password" class="api-input-box required-api" placeholder="Enter OpenRouter API Keys (comma-separated)">
+
+      <div class="section-title-sm" style="font-size: 17px; margin-top: 15px;">Primary LLM Model</div>
+      
+      <div class="model-select-group">
+        <div class="radio-option selected" onclick="selectRadio(this)">
+          <div class="custom-radio"></div>
+          <span>OpenRouter (Auto-fallback)</span>
+        </div>
+        <div class="radio-option" onclick="selectRadio(this)">
+          <div class="custom-radio"></div>
+          <span>Groq (Fastest)</span>
+        </div>
+        <div class="radio-option" onclick="selectRadio(this)">
+          <div class="custom-radio"></div>
+          <span>Gemini (Best Quality)</span>
+        </div>
+        <div class="radio-option" onclick="selectRadio(this)">
+          <div class="custom-radio"></div>
+          <span>DeepSeek (Good Reasoning)</span>
+        </div>
+      </div>
+
+      <div class="api-section-title">Groq API Keys</div>
+      <div class="api-section-subtitle">Multiple keys can be comma-separated: key1,key2,key3</div>
+      <input type="password" class="api-input-box required-api" placeholder="Enter Groq API Keys (comma-separated)">
+
+      <div class="api-section-title">Gemini API Keys</div>
+      <div class="api-section-subtitle">Multiple keys can be comma-separated</div>
+      <input type="password" class="api-input-box required-api" placeholder="Enter Gemini API Keys">
+
+      <div class="api-section-title">DeepSeek API Keys</div>
+      <div class="api-section-subtitle">Multiple keys can be comma-separated</div>
+      <input type="password" class="api-input-box required-api" placeholder="Enter DeepSeek API Keys">
+
+      <div class="api-section-title" style="margin-top: 10px;">Deep Research (Tavily AI)</div>
+      <div class="api-section-subtitle">Configure Tavily API key and custom API URL endpoints</div>
+      
+      <div class="check-api-wrapper">
+        <div id="deep-research-box-container">
+          <input type="password" class="api-input-box required-api" style="margin-bottom:0;" placeholder="Enter Tavily API Key / Custom Endpoint">
+        </div>
+        <div class="check-status-row">
+          <div class="check-status-text" id="check-status-text">
+            <span>Ready</span>
+          </div>
+          <button class="btn-check-api" id="btn-check-api-key" onclick="verifyApiKeys()">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Check API</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-purple" id="btn-save-config" disabled onclick="saveConfiguration()">Save Configuration</button>
+      <div style="text-align: center; color: #6e6d7a; font-size: 12px; margin-top: 12px; margin-bottom: 20px;">Note: Changes will apply after restart</div>
+    </div>
+
+    <!-- 6. CONNECTORS PAGE -->
+    <div id="page-connectors" class="page">
+      <div class="subpage-header">
+        <i class="fa-solid fa-arrow-left back-btn" onclick="switchTab('settings')"></i>
+        <div>
+          <h2 style="font-size: 24px;">Connectors</h2>
+          <p style="color: #7a798a; font-size: 12px;">0 of 23 connected</p>
+        </div>
+      </div>
+
+      <div class="search-input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="search-input" placeholder="Search connectors...">
+      </div>
+
+      <div class="filter-pills" style="margin-bottom: 20px;">
+        <button class="pill-btn active" style="background:#8b5cf6; border-color:#8b5cf6; color:#fff;">All</button>
+        <button class="pill-btn">Connected</button>
+        <button class="pill-btn">Not Connected</button>
+      </div>
+
+      <div class="api-section-subtitle" style="font-size: 13px; font-weight: 600; color: #a09fae; margin-bottom: 12px;">AI & Models</div>
+
+      <div class="connector-list">
+        <div class="connector-card">
+          <div class="connector-left">
+            <div class="connector-icon">G</div>
+            <div class="connector-info">
+              <h4>Gemini</h4>
+              <p>Google's Gemini -</p>
+            </div>
+          </div>
+          <span class="status-pill">Not connected</span>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-left">
+            <div class="connector-icon">G</div>
+            <div class="connector-info">
+              <h4>Groq</h4>
+              <p>Ultra-fast AI inference.</p>
+            </div>
+          </div>
+          <span class="status-pill">Not connected</span>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-left">
+            <div class="connector-icon">O</div>
+            <div class="connector-info">
+              <h4>OpenAI</h4>
+              <p>GPT models for chat,</p>
+            </div>
+          </div>
+          <span class="status-pill">Not connected</span>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-left">
+            <div class="connector-icon">C</div>
+            <div class="connector-info">
+              <h4>Claude</h4>
+              <p>Anthropic's Claude -</p>
+            </div>
+          </div>
+          <span class="status-pill">Not connected</span>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-left">
+            <div class="connector-icon">P</div>
+            <div class="connector-info">
+              <h4>Perplexity</h4>
+              <p>Real-time web-aware</p>
+            </div>
+          </div>
+          <span class="status-pill">Not connected</span>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-left">
+            <div class="connector-icon">T</div>
+            <div class="connector-info">
+              <h4>Tavily</h4>
+              <p>Deep web research &</p>
+            </div>
+          </div>
+          <span class="status-pill">Not connected</span>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-left">
+            <div class="connector-icon">D</div>
+            <div class="connector-info">
+              <h4>DeepSeek</h4>
+              <p>Advanced AI reasoning</p>
+            </div>
+          </div>
+          <span class="status-pill">Not connected</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- POPUP TOAST NOTIFICATION -->
+  <div id="save-popup" class="popup-toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span>Configuration Saved Successfully!</span>
+  </div>
+
+  <!-- FULLSCREEN CENTER ORB OVERLAY -->
+  <div id="center-orb-overlay" class="orb-overlay">
+    <div id="overlay-orb-container"></div>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </div>
+    
+    <div class="mic-btn-wrapper" onclick="toggleCenterOrb()">
+      <div id="bottom-orb-container"></div>
+    </div>
+
+    <div class="nav-item" id="nav-settings" onclick="switchTab('settings')">
+      <i class="fa-solid fa-gear"></i>
+      <span>Settings</span>
+    </div>
+  </div>
+
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- External JS Link -->
+  <script src="index.js"></script>
+</body>
+</html>
